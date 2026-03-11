@@ -15,11 +15,13 @@ WORKDIR /app
 
 # Copy build files first for better layer caching
 COPY build.gradle settings.gradle gradle.properties ./
-COPY gradlew .
-COPY gradle ./gradle
+
+COPY src ./src
+
+RUN gradle shadowJar --no-daemon -x test
 
 # Copy source code
-COPY src ./src
+
 
 # Build the application
 RUN gradle shadowJar --no-daemon -x test
