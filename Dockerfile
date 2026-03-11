@@ -15,6 +15,7 @@ WORKDIR /app
 
 # Copy build files first for better layer caching
 COPY build.gradle settings.gradle gradle.properties ./
+COPY gradlew .
 COPY gradle ./gradle
 
 # Copy source code
