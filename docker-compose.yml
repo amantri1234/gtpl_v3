@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: gtplug-app
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_NAME=gtplug_db
+      - DB_USER=gtplug_user
+      - DB_PASSWORD=gtplug_secure_password
+      - JWT_SECRET=${JWT_SECRET:-gtplugSuperSecretKeyForJwtTokenGeneration2024}
+      - JWT_EXPIRATION=86400000
+      - ENVIRONMENT=production
+      - RATE_LIMIT_REQUESTS=100
+      - RATE_LIMIT_WINDOW=60000
+      - SESSION_TIMEOUT=3600000
+      - UPLOAD_DIR=/app/uploads
+    depends_on:
+      mysql:
+        condition: service_healthy
+    volumes:
+      - uploads_data:/app/uploads
+    networks:
+      - gtplug_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  mysql:
+    image: mysql:8.0
+    container_name: gtplug-mysql
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_PASSWORD=root_secure_password
+      - MYSQL_DATABASE=gtplug_db
+      - MYSQL_USER=gtplug_user
+      - MYSQL_PASSWORD=gtplug_secure_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./src/main/resources/db/init:/docker-entrypoint-initdb.d:ro
+    networks:
+      - gtplug_network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot_secure_password"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+
+volumes:
+  mysql_data:
+    driver: local
+  uploads_data:
+    driver: local
+
+networks:
+  gtplug_network:
+    driver: bridge

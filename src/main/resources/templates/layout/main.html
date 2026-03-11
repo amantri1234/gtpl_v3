@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:fragment="layout(title, content)">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="GTPLUG Underground Work Management System">
+    <meta name="theme-color" content="#0f172a">
+    <title th:text="${title} + ' - GTPLUG'">GTPLUG</title>
+    
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Custom Styles -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .sidebar-link:hover { background-color: rgba(255,255,255,0.1); }
+        .sidebar-link.active { background-color: rgba(255,255,255,0.2); border-left: 3px solid #3b82f6; }
+    </style>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0f172a',
+                        secondary: '#1e293b',
+                        accent: '#3b82f6',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <!-- Flash Messages -->
+    <div th:if="${error}" class="fixed top-4 right-4 z-50 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg">
+        <span th:text="${error}"></span>
+    </div>
+    <div th:if="${message}" class="fixed top-4 right-4 z-50 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg">
+        <span th:text="${message}"></span>
+    </div>
+    <div th:if="${success}" class="fixed top-4 right-4 z-50 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg">
+        <span th:text="${success}"></span>
+    </div>
+
+    <!-- Main Content -->
+    <div th:replace="${content}"></div>
+
+    <!-- Flash Message Auto-hide -->
+    <script>
+        setTimeout(() => {
+            document.querySelectorAll('.fixed.top-4').forEach(el => el.remove());
+        }, 5000);
+    </script>
+    
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/service-worker.js')
+                .then(reg => console.log('Service Worker registered'))
+                .catch(err => console.log('Service Worker registration failed'));
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendor Dashboard - GTPLUG</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }</style>
+</head>
+<body class="bg-gray-100">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-slate-900 text-white flex flex-col">
+            <div class="p-6 border-b border-slate-700">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <span class="font-bold text-lg">GTPLUG</span>
+                        <p class="text-xs text-gray-400">Vendor Portal</p>
+                    </div>
+                </div>
+            </div>
+            
+            <nav class="flex-1 p-4 space-y-1">
+                <a href="/vendor/dashboard" class="sidebar-link active flex items-center gap-3 px-4 py-3 rounded-lg transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+                    </svg>
+                    Dashboard
+                </a>
+                <a href="/vendor/projects" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                    </svg>
+                    My Projects
+                </a>
+                <a href="/vendor/daily-update" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
+                    Daily Update
+                </a>
+                <a href="/vendor/material-request" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                    </svg>
+                    Material Request
+                </a>
+            </nav>
+            
+            <div class="p-4 border-t border-slate-700">
+                <a href="/logout" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-red-600/20 text-red-400 transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                    </svg>
+                    Logout
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-auto">
+            <header class="bg-white shadow-sm px-8 py-4">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-800">Dashboard</h1>
+                        <p class="text-gray-500" th:text="${vendor.vendorName}">Vendor Name</p>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div th:if="${hasPendingUpdate}" class="bg-orange-100 text-orange-700 px-4 py-2 rounded-lg text-sm font-medium">
+                            ⚠️ Pending daily update
+                        </div>
+                        <button class="relative p-2 text-gray-500 hover:text-gray-700">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                            </svg>
+                            <span th:if="${unreadNotifications > 0}" 
+                                class="absolute top-0 right-0 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center"
+                                th:text="${unreadNotifications}">0</span>
+                        </button>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                                <span class="text-green-600 font-semibold" th:text="${#strings.substring(vendor.vendorName, 0, 1).toUpperCase()}">V</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="p-8">
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm">Total Projects</p>
+                                <p class="text-3xl font-bold text-gray-800" th:text="${vendor.totalProjects}">0</p>
+                            </div>
+                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm">Active Projects</p>
+                                <p class="text-3xl font-bold text-green-600" th:text="${vendor.activeProjects}">0</p>
+                            </div>
+                            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm">Completed</p>
+                                <p class="text-3xl font-bold text-purple-600" th:text="${vendor.completedProjects}">0</p>
+                            </div>
+                            <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                                <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Projects -->
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-lg font-semibold text-gray-800">Recent Projects</h2>
+                        <a href="/vendor/projects" class="text-blue-600 hover:text-blue-700 text-sm font-medium">View All</a>
+                    </div>
+                    
+                    <div th:if="${#lists.isEmpty(projects)}" class="text-center py-8 text-gray-500">
+                        <p>No projects assigned yet.</p>
+                    </div>
+                    
+                    <div th:unless="${#lists.isEmpty(projects)}" class="space-y-4">
+                        <div th:each="project : ${projects}" class="border border-gray-200 rounded-lg p-4">
+                            <div class="flex justify-between items-start mb-2">
+                                <div>
+                                    <p class="font-semibold text-gray-800" th:text="${project.projectCode}">PROJECT-001</p>
+                                    <p class="text-sm text-gray-500" th:text="${project.startLocation + ' → ' + project.endLocation}">Location</p>
+                                </div>
+                                <span th:class="'px-3 py-1 rounded-full text-xs font-medium ' + 
+                                    (${project.status.name() == 'ASSIGNED' ? 'bg-gray-100 text-gray-700' : 
+                                      project.status.name() == 'IN_PROGRESS' ? 'bg-blue-100 text-blue-700' :
+                                      project.status.name() == 'DELAYED' ? 'bg-red-100 text-red-700' :
+                                      'bg-green-100 text-green-700'})"
+                                    th:text="${project.status}">Status</span>
+                            </div>
+                            <div class="mt-3">
+                                <div class="flex justify-between text-sm mb-1">
+                                    <span class="text-gray-500">Progress</span>
+                                    <span class="font-medium" th:text="${project.progressPercentage + '%'}">0%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="bg-blue-600 h-2 rounded-full transition-all" 
+                                         th:style="'width: ' + ${project.progressPercentage} + '%'"></div>
+                                </div>
+                            </div>
+                            <div class="mt-3 flex justify-between text-sm">
+                                <span class="text-gray-500" th:text="'Completed: ' + ${project.completedKm} + ' / ' + ${project.totalKm} + ' KM'">0/0 KM</span>
+                                <span class="text-gray-500" th:text="'Deadline: ' + ${project.deadline}">Deadline</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <a href="/vendor/daily-update" class="flex items-center gap-4 p-4 bg-blue-50 border-2 border-blue-200 rounded-lg hover:bg-blue-100 transition">
+                        <div class="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="font-medium text-gray-800">Submit Daily Update</p>
+                            <p class="text-sm text-gray-500">Report today's work progress</p>
+                        </div>
+                    </a>
+                    <a href="/vendor/material-request" class="flex items-center gap-4 p-4 bg-orange-50 border-2 border-orange-200 rounded-lg hover:bg-orange-100 transition">
+                        <div class="w-12 h-12 bg-orange-600 rounded-lg flex items-center justify-center">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="font-medium text-gray-800">Request Materials</p>
+                            <p class="text-sm text-gray-500">Request additional cable or duct</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

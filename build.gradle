@@ -1,0 +1,80 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+}
+
+group = 'com.gtplug'
+version = '1.0.0'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Javalin Web Framework
+    implementation 'io.javalin:javalin:5.6.3'
+    implementation 'io.javalin:javalin-rendering:5.6.3'
+    
+    // Thymeleaf Templating
+    implementation 'org.thymeleaf:thymeleaf:3.1.2.RELEASE'
+    implementation 'org.thymeleaf.extras:thymeleaf-extras-java8time:3.0.4.RELEASE'
+    
+    // MySQL Connector
+    implementation 'com.mysql:mysql-connector-j:8.3.0'
+    
+    // HikariCP Connection Pooling
+    implementation 'com.zaxxer:HikariCP:5.1.0'
+    
+    // JWT Authentication
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.3'
+    
+    // BCrypt Password Hashing
+    implementation 'org.mindrot:jbcrypt:0.4'
+    
+    // SLF4J Logging
+    implementation 'org.slf4j:slf4j-simple:2.0.9'
+    
+    // Jackson JSON
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.16.1'
+    
+    // Validation
+    implementation 'org.hibernate.validator:hibernate-validator:8.0.1.Final'
+    implementation 'org.glassfish.expressly:expressly:5.0.0'
+    
+    // Apache Commons for utilities
+    implementation 'org.apache.commons:commons-lang3:3.14.0'
+    
+    // Testing
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.1'
+    testImplementation 'io.javalin:javalin-testtools:5.6.3'
+}
+
+application {
+    mainClass = 'com.gtplug.Application'
+}
+
+shadowJar {
+    archiveClassifier.set('')
+    archiveVersion.set('')
+    mergeServiceFiles()
+    manifest {
+        attributes 'Main-Class': 'com.gtplug.Application'
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+    options.compilerArgs += ['-parameters']
+}
